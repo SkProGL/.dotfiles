@@ -5,3 +5,6 @@ chmod u+x nvim-linux-x86_64.appimage
 ./nvim-linux-x86_64.appimage --appimage-extract
 sudo mv squashfs-root /opt/nvim
 sudo ln -sf /opt/nvim/usr/bin/nvim /usr/local/bin/nvim
+
+rm nvim-linux-x86_64.appimage
+# sudo apt install fzf ripgrep nodejs -y
