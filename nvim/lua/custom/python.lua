@@ -1,0 +1,3 @@
+-- sudo apt install pipx
+-- pipx install autopep8
+-- pipx ensurepath

@@ -1,0 +1,18 @@
+wsl.exe --update 
+wsl.exe --status
+# install kitty terminal
+curl -L https://sw.kovidgoyal.net/kitty/installer.sh | sh /dev/stdin
+# kitten icat st.png
+
+# add kitty to path
+export PATH="$HOME/.local/kitty.app/bin:$PATH"
+
+# editing kitty conf
+vim ~/.config/kitty/kitty.conf
+hide_window_decorations yes
+window_padding_width 8
+background_opacity 0.95
+window_border_width 1.5
+window_margin_width     10
+
+/mnt/c/Program\ Files/Google/Chrome/Application/chrome.exe "file:///<path_to_img>"
