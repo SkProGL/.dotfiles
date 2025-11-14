@@ -260,7 +260,6 @@ return {
 			-- lspconfig.eslint.setup({})
 			-- require("custom.lsp").setup()
 
-
 			vim.lsp.enable("ts_ls")
 
 			vim.lsp.config.eslint = {}
@@ -439,4 +438,47 @@ return {
 	-- 		require("remote-ssh").setup({})
 	-- 	end,
 	-- },
+
+	{
+		"olimorris/codecompanion.nvim",
+		dependencies = {
+			"nvim-lua/plenary.nvim",
+			"nvim-treesitter/nvim-treesitter",
+		},
+		opts = {
+			log_level = "DEBUG",
+			strategies = {
+				chat = {
+					adapter = "gemini",
+				},
+				inline = {
+					adapter = "gemini",
+				},
+			},
+			adapters = {
+				http = {},
+			},
+		},
+		config = function(_, opts)
+			local function api_key()
+				local handle = io.popen("gpg --quiet --decrypt ~/model_key.txt.gpg 2>/dev/null")
+				if handle then
+					local result = handle:read("*a")
+					handle:close()
+					-- trim whitespace/newlines
+					return result:gsub("%s+$", "")
+				end
+				return nil
+			end
+			opts.adapters.http.gemini = function()
+				return require("codecompanion.adapters").extend("gemini", {
+					env = {
+						api_key = api_key,
+					},
+				})
+			end
+
+			require("codecompanion").setup(opts)
+		end,
+	},
 }

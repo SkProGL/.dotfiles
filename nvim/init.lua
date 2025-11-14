@@ -274,8 +274,11 @@ vim.keymap.set("n", "<leader>hh", function()
 	local file_url = "file:///" .. win_path
 
 	-- Launch Chrome without blocking Neovim
+	local browser = "/mnt/c/Program Files/Google/Chrome/Application/chrome.exe"
 	vim.fn.jobstart({
-		"/mnt/c/Program Files/Google/Chrome/Application/chrome.exe",
+		-- "",
+		vim.loop.fs_stat(browser) and browser or
+		"/mnt/c/Program Files/BraveSoftware/Brave-Browser/Application/brave.exe",
 		file_url,
 	}, { detach = true })
 end, { noremap = true, silent = true })
