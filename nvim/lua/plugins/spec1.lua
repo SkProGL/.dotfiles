@@ -109,7 +109,14 @@ return {
 		config = true,
 	},
 	{
-		-- sudo apt install nodejs npm
+		-- sudo apt install nodejs xclip npm pipx
+		-- curl https://sh.rustup.rs -sSf | sh
+		-- cargo install stylua
+
+		-- sudo apt remove fzf
+		-- git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
+		-- ~/.fzf/install
+
 		"WhoIsSethDaniel/mason-tool-installer.nvim",
 		config = function()
 			require("mason-tool-installer").setup({
@@ -118,6 +125,7 @@ return {
 					"stylelint", -- css, javascript, html
 					"prettierd", -- css, javascript, html
 					"prettier",
+					"djlint",
 				},
 				auto_update = false,
 				run_on_start = true,
@@ -137,6 +145,7 @@ return {
 
 					css = { "prettierd", "prettier", stop_after_first = true }, -- CSS formatter added
 					html = { "prettierd", "prettier", stop_after_first = true },
+					-- html = { "djlint" },
 					javascript = { "prettierd", "prettier", stop_after_first = true },
 				},
 				formatters = {
@@ -293,8 +302,9 @@ return {
 
 				["<Tab>"] = { "snippet_forward", "fallback" },
 				["<S-Tab>"] = { "snippet_backward", "fallback" },
-				-- ["<Tab>"] = { "select_next", "snippet_forward", "fallback" },
-				-- ["<S-Tab>"] = { "select_prev", "snippet_backward", "fallback" },
+
+				["<C-j>"] = { "select_next", "snippet_forward", "fallback" },
+				["<C-k>"] = { "select_prev", "snippet_backward", "fallback" },
 				["<C-l>"] = { "show_signature", "hide_signature", "fallback" },
 			},
 
@@ -479,6 +489,14 @@ return {
 			end
 
 			require("codecompanion").setup(opts)
+		end,
+	},
+	{
+		"iamcco/markdown-preview.nvim",
+		cmd = { "MarkdownPreviewToggle", "MarkdownPreview", "MarkdownPreviewStop" },
+		ft = { "markdown" },
+		build = function()
+			vim.fn["mkdp#util#install"]()
 		end,
 	},
 }

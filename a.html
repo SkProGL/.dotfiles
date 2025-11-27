@@ -1,0 +1,133 @@
+<body>
+  <h1>Dragon (distributed systems)</h1>
+  <div class="fast-preview">
+    <div class="todo-section"></div>
+    <div class="preview-links"></div>
+    <div class="text-block">
+      <div class="links"></div>
+      <h1>TODO</h1>
+      <pre>
+add survey papers (they might have reliable datasets)
+			</pre
+      >
+
+      <div class="gallery"></div>
+    </div>
+  </div>
+
+  <style>
+    body {
+      margin: 0;
+      padding: 5rem;
+      font-family: monospace;
+    }
+    iframe {
+      width: 90%;
+      height: 30vh;
+      margin: auto;
+      border: none;
+    }
+    .src-url {
+      margin: 2rem 0;
+      text-align: center;
+      font-size: 18px;
+    }
+
+    a {
+      display: block;
+      margin: 1rem 0;
+      text-decoration: none;
+    }
+    .src-url a {
+      margin: 0;
+      padding-top: 1rem;
+    }
+    .links {
+      border-left: 3px solid black;
+      margin: 3rem 0;
+    }
+    .fast-preview .todo-section,
+    .text-block {
+      text-align: left;
+      width: fit-content;
+      margin: auto;
+      font-size: 16px;
+    }
+    .preview-links {
+      background: #f7f7f7;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(33%, 1fr));
+    }
+    img {
+      display: block;
+      margin: 0.5rem;
+    }
+    ::selection {
+      background: #ffe78c;
+    }
+  </style>
+  <script>
+    function addWithTag(id = "", tag = "", text = "", link = "") {
+      if (!id || !tag) {
+        return;
+      }
+      const parentElement = document.querySelector(id);
+      const element = document.createElement(tag);
+      if (tag === "img") {
+        element.src = link;
+        element.width = "800";
+      } else if (tag === "a") {
+        element.href = link;
+        element.target = "_blank";
+      }
+      element.innerText = text;
+      parentElement.append(element);
+    }
+    function addHeader(id = "", text = "") {
+      const element = document.querySelector(id);
+      if (!element.querySelector("h1")) {
+        const header = document.createElement("h1");
+        header.innerText = text;
+        element.appendChild(header);
+      }
+    }
+    function addIframe(url, title = "") {
+      const grid = document.querySelector(".preview-links");
+      const div = document.createElement("div");
+      const iframe = document.createElement("iframe");
+      const link = document.createElement("a");
+      iframe.src = url;
+      link.href = url;
+      link.target = "_blank";
+      link.innerText = title;
+      div.className = "src-url";
+      div.append(iframe);
+      div.append(link);
+      grid.append(div);
+    }
+
+    function addLink(url, title = "") {
+      addHeader(".links", "Links");
+      addWithTag(".links", "a", title, url);
+      document.querySelector(".links").style.padding = "0.2rem 2rem";
+    }
+
+    function addImage(url, title = "") {
+      addHeader(".gallery", "Gallery");
+      addWithTag(".gallery", "div", title);
+      addWithTag(".gallery", "img", title, url);
+    }
+    function initLink(title = "") {
+      const links = document.querySelector(".links");
+      const header = document.createElement("h1");
+      header.innerText = title;
+      links.append(header);
+    }
+    addIframe("https://arxiv.org/pdf/2509.26507", "BDH");
+    addLink(
+      "https://raw.githubusercontent.com/karpathy/char-rnn/master/data/tinyshakespeare/input.txt",
+      "[dataset] tinyshakespeare",
+    );
+    addImage("p0.png", "Parameters");
+  </script>
+</body>

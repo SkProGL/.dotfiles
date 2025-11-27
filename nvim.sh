@@ -27,5 +27,16 @@ update_config(){
 	sudo apt install fzf ripgrep nodejs -y
 }
 
+tools(){
+	cd
+	sudo apt install nodejs xclip npm pipx
+	curl https://sh.rustup.rs -sSf | sh
+	cargo install stylua
+
+	sudo apt remove fzf
+	git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
+	~/.fzf/install
+}
+
 download
 update_config nvim

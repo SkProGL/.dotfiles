@@ -257,28 +257,27 @@ vim.keymap.set("n", "<leader>O", function()
 	print("No uv_venv window to close")
 end, { desc = "Close venv terminal window if open" })
 
-vim.keymap.set("t", "<esc><esc>", "<c-\\><c-n>")
+vim.keymap.set("t", "<esc><esc>", "<c-\\><c-n>", {desc="Escape insert mode in tmux"})
 
--- vim.keymap.set('n', '<leader>hh', function()
---   local path = vim.fn.expand('%:p')
---   vim.cmd('silent !/mnt/c/Program\\ Files/Google/Chrome/Application/chrome.exe "file:///' .. path .. '"')
--- end, { noremap = true, silent = true })
 vim.keymap.set("n", "<leader>hh", function()
-	-- Get full Linux path of current buffer
+	-- get full linux path of current buffer
 	local linux_path = vim.fn.expand("%:p")
 
-	-- Convert to Windows-style path using wslpath
+	-- convert to windows-style path using wslpath
 	local win_path = vim.fn.systemlist({ "wslpath", "-w", linux_path })[1]
 
-	-- Build proper file:// URL for Chrome
+	-- build proper file:// url for chrome
 	local file_url = "file:///" .. win_path
 
-	-- Launch Chrome without blocking Neovim
+	-- launch chrome without blocking neovim
 	local browser = "/mnt/c/Program Files/Google/Chrome/Application/chrome.exe"
 	vim.fn.jobstart({
-		-- "",
-		vim.loop.fs_stat(browser) and browser or
-		"/mnt/c/Program Files/BraveSoftware/Brave-Browser/Application/brave.exe",
+		vim.loop.fs_stat(browser) and browser
+			or "/mnt/c/Program Files/BraveSoftware/Brave-Browser/Application/brave.exe",
 		file_url,
 	}, { detach = true })
-end, { noremap = true, silent = true })
+end, { noremap = true, silent = true, desc = "Open file in browser (chrome/brave)" })
+
+vim.keymap.set("n", "<leader>hj", function()
+	vim.cmd([[%s/\r//g]])
+end, { desc = "Remove CR characters (CRLF -> LF)" })
