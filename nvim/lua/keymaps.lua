@@ -10,6 +10,8 @@ vim.keymap.set("n", "<Leader>t", ":echo 'Leader works!'<CR>", { desc = "Test lea
 vim.keymap.set("n", "<A-l>", ":bnext<CR>", { silent = true })
 vim.keymap.set("n", "<A-h>", ":bprevious<CR>", { silent = true })
 
+vim.keymap.set("t", "<esc><esc>", "<c-\\><c-n>", { desc = "Escape insert mode in tmux" })
+
 vim.keymap.set("n", "<leader>ww", vim.diagnostic.setloclist, { desc = "Open diagnostics in location list" })
 -- vim.keymap.set("n", "<leader>wr", ":LspRestart<CR>", { desc = "Restart lsp", silent = true })
 vim.keymap.set("n", "<leader>wr", function()

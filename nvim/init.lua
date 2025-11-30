@@ -26,8 +26,55 @@ vim.api.nvim_create_autocmd("TextYankPost", {
 	end,
 })
 
+vim.keymap.set("n", "<leader>rq", function()
+	local linux_dir
+
+	-- if current buffer is oil, use the previous logic (cwd)
+	if vim.bo.filetype == "oil" then
+		linux_dir = vim.fn.getcwd()
+	else
+		-- otherwise use directory of current buffer
+		linux_dir = vim.fn.expand("%:p:h")
+	end
+
+	-- convert to windows path
+	local win_path = vim.fn.system('wslpath -w "' .. linux_dir .. '"'):gsub("\n", "")
+
+	-- copy to windows clipboard via clip.exe
+	local job_id = vim.fn.jobstart({ "clip.exe" }, { detach = false })
+	if job_id > 0 then
+		vim.fn.chansend(job_id, win_path .. "\n")
+		vim.fn.chanclose(job_id, "stdin")
+	else
+		print("failed to start clip.exe")
+		return
+	end
+
+	print("copied windows path: " .. win_path)
+end, { desc = "copy windows path (oil-aware)" })
+
+vim.keymap.set("n", "<leader>rw", function()
+	-- convert wsl -> windows path
+	local linux_dir = vim.fn.getcwd()
+	local win_path = vim.fn.system('wslpath -w "' .. linux_dir .. '"'):gsub("\n", "")
+
+	-- escape quotes for cmd.exe
+	local escaped = win_path:gsub('"', '\\"')
+
+	-- fully detached powershell window that does not steal focus
+	vim.fn.jobstart({
+		"powershell.exe",
+		"-WindowStyle",
+		"Hidden",
+		"-Command",
+		"Start-Process powershell.exe -ArgumentList '-NoExit','-Command','cd \""
+			.. escaped
+			.. "\"' -WindowStyle Normal",
+	}, { detach = true })
+end, { desc = "(powershell) cwd detached" })
+
 -- open in file explorer
-vim.keymap.set("n", "<Leader>r", function()
+vim.keymap.set("n", "<Leader>re", function()
 	-- try to detect explorer.exe
 	local explorer = vim.fn.executable("explorer.exe") == 1
 	if explorer then
@@ -35,7 +82,31 @@ vim.keymap.set("n", "<Leader>r", function()
 	else
 		vim.cmd("silent! !xdg-open .")
 	end
-end, { desc = "Open in file explorer" })
+end, { desc = "(file explorer) cwd" })
+
+vim.keymap.set("n", "<leader>ra", function()
+	vim.cmd([[%s/\r//g]])
+end, { desc = "(CRLF -> LF) remove CR characters" })
+
+vim.keymap.set("n", "<leader>rr", function()
+	-- get full linux path of current buffer
+	local linux_path = vim.fn.expand("%:p")
+
+	-- convert to windows-style path using wslpath
+	local win_path = vim.fn.systemlist({ "wslpath", "-w", linux_path })[1]
+
+	-- build proper file:// url for chrome
+	local file_url = "file:///" .. win_path
+
+	-- launch chrome without blocking neovim
+	local browser = "/mnt/c/Program Files/Google/Chrome/Application/chrome.exe"
+	vim.fn.jobstart({
+		vim.loop.fs_stat(browser) and browser
+			or "/mnt/c/Program Files/BraveSoftware/Brave-Browser/Application/brave.exe",
+		file_url,
+	}, { detach = true })
+end, { noremap = true, silent = true, desc = "(chrome/brave) current file in browser " })
+
 
 -- format file
 vim.keymap.set({ "n", "v" }, "<leader>f", function()
@@ -257,27 +328,3 @@ vim.keymap.set("n", "<leader>O", function()
 	print("No uv_venv window to close")
 end, { desc = "Close venv terminal window if open" })
 
-vim.keymap.set("t", "<esc><esc>", "<c-\\><c-n>", {desc="Escape insert mode in tmux"})
-
-vim.keymap.set("n", "<leader>hh", function()
-	-- get full linux path of current buffer
-	local linux_path = vim.fn.expand("%:p")
-
-	-- convert to windows-style path using wslpath
-	local win_path = vim.fn.systemlist({ "wslpath", "-w", linux_path })[1]
-
-	-- build proper file:// url for chrome
-	local file_url = "file:///" .. win_path
-
-	-- launch chrome without blocking neovim
-	local browser = "/mnt/c/Program Files/Google/Chrome/Application/chrome.exe"
-	vim.fn.jobstart({
-		vim.loop.fs_stat(browser) and browser
-			or "/mnt/c/Program Files/BraveSoftware/Brave-Browser/Application/brave.exe",
-		file_url,
-	}, { detach = true })
-end, { noremap = true, silent = true, desc = "Open file in browser (chrome/brave)" })
-
-vim.keymap.set("n", "<leader>hj", function()
-	vim.cmd([[%s/\r//g]])
-end, { desc = "Remove CR characters (CRLF -> LF)" })
