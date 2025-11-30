@@ -1,3 +1,5 @@
+# enable vi mode
+set -o vi
 
 alias l='ls -lah'
 alias v="nvim"

@@ -75,7 +75,6 @@ add survey papers (they might have reliable datasets)
       const element = document.createElement(tag);
       if (tag === "img") {
         element.src = link;
-        element.width = "800";
       } else if (tag === "a") {
         element.href = link;
         element.target = "_blank";
@@ -112,10 +111,11 @@ add survey papers (they might have reliable datasets)
       document.querySelector(".links").style.padding = "0.2rem 2rem";
     }
 
-    function addImage(url, title = "") {
-      addHeader(".gallery", "Gallery");
+    function addImage(url, title = "", width = 800) {
       addWithTag(".gallery", "div", title);
       addWithTag(".gallery", "img", title, url);
+      const imgs = document.querySelectorAll(".gallery img");
+      imgs[imgs.length - 1].width = width;
     }
     function initLink(title = "") {
       const links = document.querySelector(".links");

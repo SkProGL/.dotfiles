@@ -1,0 +1,3 @@
+# notepad $PROFILE
+Set-PSReadLineKeyHandler -Chord Ctrl+k -Function PreviousHistory
+Set-PSReadLineKeyHandler -Chord Ctrl+j -Function NextHistory
