@@ -21,3 +21,7 @@ vim.keymap.set("n", "<leader>wr", function()
 		vim.diagnostic.reset()
 	end)
 end, { desc = "Restart LSP and clear diagnostics", silent = true })
+
+
+-- center layout
+vim.keymap.set("n", "<leader>rs", ":NoNeckPain<CR>", { desc = "Center layout" , silent = true })

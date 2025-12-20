@@ -61,12 +61,84 @@ add survey papers (they might have reliable datasets)
     img {
       display: block;
       margin: 0.5rem;
+      transition: width 0.15s linear;
     }
     ::selection {
       background: #ffe78c;
     }
   </style>
   <script>
+    window.addEventListener("load", () => {
+      const images = document.getElementsByTagName("img");
+
+      for (const img of images) {
+        const originalWidth = img.clientWidth;
+        let locked = false;
+        img.addEventListener("wheel", (e) => {
+          e.preventDefault();
+
+          // horizontal scroll scroll page
+          if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) {
+            window.scrollBy({ left: e.deltaX, behavior: "auto" });
+            return;
+          }
+
+          // vertical scroll zoom image
+          let nextWidth = img.clientWidth + e.deltaY * -2.5;
+
+          // prevent zooming smaller than original
+          if (nextWidth < originalWidth) nextWidth = originalWidth;
+
+          img.style.width = nextWidth + "px";
+        });
+
+        img.addEventListener("mouseleave", () => {
+          if (!locked) {
+            img.style.width = originalWidth + "px";
+          }
+        });
+        const sensitivity = 0.05;
+        let vx = 0;
+        let vy = 0;
+
+        const damping = 0.85; // lower = smoother but slower
+        const accel = 0.15; // lower = weaker reaction
+
+        function updateScroll() {
+          if (Math.abs(vx) > 0.1 || Math.abs(vy) > 0.1) {
+            window.scrollBy(vx, vy);
+            vx *= damping;
+            vy *= damping;
+          }
+          requestAnimationFrame(updateScroll);
+        }
+        updateScroll();
+
+        img.addEventListener("mousemove", (e) => {
+          // prevent movement if not zoomed in
+          if (img.clientWidth <= originalWidth) return;
+
+          const viewportCX = window.innerWidth / 2;
+          const viewportCY = window.innerHeight / 2;
+
+          const dx = (e.clientX - viewportCX) * sensitivity;
+          const dy = (e.clientY - viewportCY) * sensitivity;
+
+          vx += dx * accel;
+          vy += dy * accel;
+        });
+
+        // remove the old mouseleave reset
+        img.addEventListener("click", () => {
+          if (locked) {
+            img.style.width = originalWidth + "px";
+            locked = false;
+          } else {
+            locked = true;
+          }
+        });
+      }
+    });
     function addWithTag(id = "", tag = "", text = "", link = "") {
       if (!id || !tag) {
         return;

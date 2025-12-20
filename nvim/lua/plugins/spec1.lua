@@ -91,6 +91,10 @@ return {
 			require("custom.treesitter")
 			require("nvim-treesitter.configs").setup({
 				playground = { enable = true },
+				-- (for html) indent does not always work as expected 
+				-- indent = {
+				-- 	enable = false,
+				-- },
 			})
 		end,
 	},
@@ -502,5 +506,10 @@ return {
 		config = function()
 			vim.g.mkdp_auto_close = 0
 		end,
+	},
+	{ "shortcuts/no-neck-pain.nvim" },
+	{
+		"nullchilly/fsread.nvim",
+
 	},
 }

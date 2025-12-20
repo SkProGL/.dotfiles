@@ -17,6 +17,26 @@ require("options")
 -- sudo umount /mnt/c
 -- sudo mount -t drvfs C: /mnt/c
 
+local function get_opened_dir(win_path)
+	local linux_path = ""
+	local path = ""
+
+	-- if current buffer is oil, return cwd
+	if vim.bo.filetype == "oil" then
+		path = vim.fn.getcwd()
+	else
+		-- otherwise return directory of current buffer
+		path = vim.fn.expand("%:p:h")
+	end
+
+	if win_path then
+		-- convert to windows path
+		path = vim.fn.system('wslpath -w "' .. path .. '"'):gsub("\n", "")
+	end
+
+	return path
+end
+
 -- highlight copied text
 vim.api.nvim_create_autocmd("TextYankPost", {
 	desc = "Highlight when yanking (copying) text",
@@ -27,15 +47,7 @@ vim.api.nvim_create_autocmd("TextYankPost", {
 })
 
 vim.keymap.set("n", "<leader>rq", function()
-	local linux_dir
-
-	-- if current buffer is oil, use the previous logic (cwd)
-	if vim.bo.filetype == "oil" then
-		linux_dir = vim.fn.getcwd()
-	else
-		-- otherwise use directory of current buffer
-		linux_dir = vim.fn.expand("%:p:h")
-	end
+	local linux_dir = get_opened_dir()
 
 	-- convert to windows path
 	local win_path = vim.fn.system('wslpath -w "' .. linux_dir .. '"'):gsub("\n", "")
@@ -51,14 +63,12 @@ vim.keymap.set("n", "<leader>rq", function()
 	end
 
 	print("copied windows path: " .. win_path)
-end, { desc = "copy windows path (oil-aware)" })
+end, { desc = "(copy path) windows" })
 
 vim.keymap.set("n", "<leader>rw", function()
 	-- convert wsl -> windows path
-	local linux_dir = vim.fn.getcwd()
-	local win_path = vim.fn.system('wslpath -w "' .. linux_dir .. '"'):gsub("\n", "")
-
-	-- escape quotes for cmd.exe
+	local win_path = get_opened_dir(true)
+	-- escape quotes for cmd
 	local escaped = win_path:gsub('"', '\\"')
 
 	-- fully detached powershell window that does not steal focus
@@ -84,10 +94,6 @@ vim.keymap.set("n", "<Leader>re", function()
 	end
 end, { desc = "(file explorer) cwd" })
 
-vim.keymap.set("n", "<leader>ra", function()
-	vim.cmd([[%s/\r//g]])
-end, { desc = "(CRLF -> LF) remove CR characters" })
-
 vim.keymap.set("n", "<leader>rr", function()
 	-- get full linux path of current buffer
 	local linux_path = vim.fn.expand("%:p")
@@ -107,6 +113,14 @@ vim.keymap.set("n", "<leader>rr", function()
 	}, { detach = true })
 end, { noremap = true, silent = true, desc = "(chrome/brave) current file in browser " })
 
+vim.keymap.set("n", "<Leader>rt", function()
+	local dir = get_opened_dir(true)
+	vim.fn.jobstart({ "code", dir }, { detach = true })
+end, { desc = "(vscode) cwd" })
+
+vim.keymap.set("n", "<leader>ra", function()
+	vim.cmd([[%s/\r//g]])
+end, { desc = "(CRLF -> LF) remove CR characters" })
 
 -- format file
 vim.keymap.set({ "n", "v" }, "<leader>f", function()
