@@ -1,5 +1,7 @@
 ﻿#Requires AutoHotkey v2.0+
 
+; "C:\Program Files\AutoHotkey\v2\AutoHotkey.exe" "C:\Users\glebi\Desktop\BT_KEYBOARD.ahk"
+
 ; Remap Caps Lock to Escape
 CapsLock::Esc
 
@@ -20,6 +22,17 @@ Enter::Send(";")
 ; Shift+Enter -> colon (:)
 +Enter::Send(":")
 
+; Suspend on win + caps lock
+#CapsLock::{
+    SetCapsLockState("Off")
+    Suspend()  ; explicit toggle
+}
+
+; ctrl + j arrow down
+^j::Send("{Down}")
+
+; ctrl + k arrow up
+^k::Send("{Up}")
 
 ; step := 20  ; Number of pixels to move each time
 
