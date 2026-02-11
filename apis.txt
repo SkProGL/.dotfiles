@@ -1,0 +1,6 @@
+# define api
+curl -s https://api.dictionaryapi.dev/api/v2/entries/en/hello | python3 -c "import sys, json; print(json.load(sys.stdin))"
+
+# translate api
+curl -s "https://lingva.ml/api/v1/auto/ru/hello" | python3 -c "import sys, json; print(json.load(sys.stdin)['translation'])"
+curl -s "https://api.mymemory.translated.net/get?q=hello&langpair=en|fr"

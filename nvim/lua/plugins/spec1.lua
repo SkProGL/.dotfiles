@@ -91,7 +91,7 @@ return {
 			require("custom.treesitter")
 			require("nvim-treesitter.configs").setup({
 				playground = { enable = true },
-				-- (for html) indent does not always work as expected 
+				-- (for html) indent does not always work as expected
 				-- indent = {
 				-- 	enable = false,
 				-- },
@@ -238,6 +238,7 @@ return {
 					"pylsp",
 					"ts_ls",
 					"eslint",
+					-- "rust_analyzer",
 				}, -- list of LSPs to auto-install
 				automatic_enable = false,
 			})
@@ -270,6 +271,7 @@ return {
 					javascript = { format = { enable = false } },
 				},
 			}
+
 			-- lspconfig.eslint.setup({})
 			-- require("custom.lsp").setup()
 
@@ -510,6 +512,5 @@ return {
 	{ "shortcuts/no-neck-pain.nvim" },
 	{
 		"nullchilly/fsread.nvim",
-
 	},
 }
