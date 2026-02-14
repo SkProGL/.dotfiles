@@ -1,3 +1,5 @@
+local common = require("common")
+
 -- center when scroll
 vim.keymap.set("n", "<C-d>", "<C-d>zz")
 vim.keymap.set("n", "<C-u>", "<C-u>zz")
@@ -23,7 +25,7 @@ vim.keymap.set("n", "<leader>wr", function()
 end, { desc = "Restart LSP and clear diagnostics", silent = true })
 
 vim.keymap.set("n", "<leader>rq", function()
-	local linux_dir = get_opened_dir()
+	local linux_dir = common.get_opened_dir()
 
 	-- convert to windows path
 	local win_path = vim.fn.system('wslpath -w "' .. linux_dir .. '"'):gsub("\n", "")
@@ -43,20 +45,23 @@ end, { desc = "(copy path) windows" })
 
 vim.keymap.set("n", "<leader>rw", function()
 	-- convert wsl -> windows path
-	local win_path = get_opened_dir(true)
+	local win_path = common.get_opened_dir(true)
 	-- escape quotes for cmd
 	local escaped = win_path:gsub('"', '\\"')
 
 	-- fully detached powershell window that does not steal focus
-	vim.fn.jobstart({
-		"powershell.exe",
-		"-WindowStyle",
-		"Hidden",
-		"-Command",
-		"Start-Process powershell.exe -ArgumentList '-NoExit','-Command','cd \""
-			.. escaped
-			.. "\"' -WindowStyle Normal",
-	}, { detach = true })
+	vim.fn.jobstart(
+		{
+			"powershell.exe",
+			"-WindowStyle",
+			"Hidden",
+			"-Command",
+			"Start-Process powershell.exe -ArgumentList '-NoExit','-Command','cd \""
+				.. escaped
+				.. "\"' -WindowStyle Normal",
+		},
+		{ detach = true }
+	)
 end, { desc = "(powershell) cwd detached" })
 
 -- open in file explorer
@@ -90,7 +95,7 @@ vim.keymap.set("n", "<leader>rr", function()
 end, { noremap = true, silent = true, desc = "(chrome/brave) current file in browser " })
 
 vim.keymap.set("n", "<Leader>rt", function()
-	local dir = get_opened_dir(true)
+	local dir = common.get_opened_dir(true)
 	vim.fn.jobstart({ "code", dir }, { detach = true })
 end, { desc = "(vscode) cwd" })
 
@@ -139,7 +144,7 @@ function curl_lookup()
 	]]):gsub("hello", w))
 	-- vim.cmd("vnew | setlocal buftype=nofile bufhidden=wipe noswapfile")
 	-- vim.api.nvim_buf_set_lines(0, 0, -1, false, vim.split(o, "\n"))
-	print(o)
+	vim.notify(o)
 end
 
 vim.keymap.set("n", "<leader>vv", function()

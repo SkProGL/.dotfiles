@@ -365,9 +365,16 @@ return {
 					t({ ".__dict__, indent=4, default=str))" }),
 				}),
 
-				s("wp", {
+				s("wj", {
 					-- start on a new line with `for `
 					t({ "", 'print(f"\\033[43m\\033[30m' }),
+					i(0, "i"),
+					-- line break + indentation
+					t({ '\\033[0m")' }),
+				}),
+				s("wk", {
+					-- start on a new line with `for `
+					t({ "", 'print(f"\\033[42m\\033[30m' }),
 					i(0, "i"),
 					-- line break + indentation
 					t({ '\\033[0m")' }),
@@ -512,5 +519,28 @@ return {
 	{ "shortcuts/no-neck-pain.nvim" },
 	{
 		"nullchilly/fsread.nvim",
+	},
+	{
+		"mrcjkb/rustaceanvim",
+		version = "^6", -- Recommended
+		lazy = false, -- This plugin is already lazy
+
+		config = function()
+			vim.g.rustaceanvim = {
+				server = {
+					settings = {
+						["rust-analyzer"] = {
+							inlayHints = {
+								bindingModeHints = { enable = true },
+								chainingHints = { enable = true },
+								closingBraceHints = { enable = true },
+								parameterHints = { enable = true },
+								typeHints = { enable = true },
+							},
+						},
+					},
+				},
+			}
+		end,
 	},
 }
