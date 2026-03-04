@@ -7,15 +7,36 @@ require("config.lazy")
 require("options")
 require("keymaps")
 
+-- Latest notes/changes:
+-- ++++++++++++++++++++++++++++++++++++++++
+
+-- match regex and apply macro
+-- :g/pattern/normal @q
+
+-- enable quickfix list search
+vim.opt.grepprg = "timeout 10s rg --vimgrep --smart-case "
+-- populate quickfix list using ripgrep instead of vimgrep
+-- :grep  zpm\.config
+-- apply changes on vim quickfix
+-- :cfdo s/zpm\.config/zpm\.fit_dodata\.config/g
+-- :wa or :wall to write all changes
+-- reverses cfdo changes
+-- :bufdo undo
+
 -- make all comments lowercase
 -- %s/#.*$/\L&
 
 -- evaluate selected line as math expression
 -- !bc
 
+-- usually solves it
+-- sudo mount -t drvfs C: /mnt/c
+
 -- restart ripgrep and WSL
 -- sudo umount /mnt/c
 -- sudo mount -t drvfs C: /mnt/c
+
+-- ++++++++++++++++++++++++++++++++++++++++
 
 -- highlight copied text
 vim.api.nvim_create_autocmd("TextYankPost", {
