@@ -235,7 +235,22 @@ local function list_py_funcs()
 end
 
 vim.api.nvim_create_user_command("ListFunctions", list_py_funcs, {})
-
+vim.api.nvim_create_autocmd("ColorScheme", {
+	callback = function()
+		vim.api.nvim_set_hl(0, "Folded", {
+			fg = "#ff8800",
+			bg = "#1e1e2e",
+		})
+	end,
+})
+vim.opt.foldtext =
+	"fnamemodify(bufname('%'), ':t') .. ': ' .. getline(v:foldstart) .. ' (' .. (v:foldend - v:foldstart + 1) .. ')'"
+vim.opt.fillchars = {
+	fold = " ",
+	foldopen = "",
+	foldclose = "",
+	foldsep = " ",
+}
 -- adapt colorscheme on buffer change
 vim.api.nvim_create_autocmd("BufEnter", {
 	callback = function()
