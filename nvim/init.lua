@@ -6,7 +6,35 @@ vim.g.maplocalleader = " "
 require("config.lazy")
 require("options")
 require("keymaps")
+-- require("custom.min").setup()
+require("custom.focus").setup()
 
+vim.keymap.set("n", "<leader>kk", function() -- map <leader>kk in normal mode
+	if vim.wo.diff then -- if current window already in diff mode
+		vim.cmd("bwipeout")
+		return
+	end
+	local rel = vim.fn.expand("%") -- file path relative to current working directory
+	local tmp = vim.fn.tempname() -- create temporary filename
+
+	vim.fn.system("git show HEAD:./" .. rel .. " > " .. tmp) -- write HEAD version of file into temp file
+
+	vim.cmd("vert diffsplit " .. tmp) -- open vertical diff split with the temp file
+	vim.cmd("file HEAD:" .. rel) -- rename the buffer
+end)
+
+-- vim.keymap.set("n", "<leader>kk", function()
+-- 	local file = vim.fn.expand("%:p")
+-- 	local git_root = vim.fn.systemlist("git rev-parse --show-toplevel")[1]
+-- 	local rel = file:gsub(git_root .. "/", "")
+--
+-- 	vim.cmd("vert new | setlocal buftype=nofile bufhidden=wipe noswapfile")
+-- 	vim.cmd("read !git show HEAD:" .. rel)
+-- 	vim.cmd("0d_")
+-- 	vim.cmd("diffthis")
+-- 	vim.cmd("wincmd p")
+-- 	vim.cmd("diffthis")
+-- end, { desc = "Diff with git HEAD" })
 -- Latest notes/changes:
 -- ++++++++++++++++++++++++++++++++++++++++
 
@@ -17,8 +45,8 @@ require("keymaps")
 vim.opt.grepprg = "timeout 10s rg --vimgrep --smart-case "
 -- populate quickfix list using ripgrep instead of vimgrep
 -- :grep  zpm\.config
--- apply changes on vim quickfix
--- :cfdo s/zpm\.config/zpm\.fit_dodata\.config/g
+-- apply changes on vim quickfix (full file %s)
+-- :cfdo %s/zpm\.config/zpm\.fit_dodata\.config/g
 -- :wa or :wall to write all changes
 -- reverses cfdo changes
 -- :bufdo undo

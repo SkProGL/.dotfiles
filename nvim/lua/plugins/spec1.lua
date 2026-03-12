@@ -127,9 +127,11 @@ return {
 				ensure_installed = {
 					"stylua", -- lua
 					"stylelint", -- css, javascript, html
+					"lua_ls",
 					"prettierd", -- css, javascript, html
 					"prettier",
 					"djlint",
+					"emmet_language_server",
 				},
 				auto_update = false,
 				run_on_start = true,
@@ -238,14 +240,42 @@ return {
 					"pylsp",
 					"ts_ls",
 					"eslint",
+					"html",
+					"lua_ls",
+					"emmet_language_server",
 					-- "rust_analyzer",
 				}, -- list of LSPs to auto-install
 				automatic_enable = false,
 			})
 
 			-- local lspconfig = require("lspconfig")
-			-- lspconfig.pyright.setup({})
 
+			-- lspconfig.pyright.setup({})
+			-- vim.lsp.enable("pyright")
+			vim.lsp.config.lua_ls = {
+				settings = {
+					Lua = {
+						hint = {
+							enable = true,
+							setType = true,
+							paramType = true,
+							paramName = "All",
+							semicolon = "Disable",
+							arrayIndex = "Enable",
+						},
+						-- enables autosuggestions for vim.
+						diagnostics = { globals = { "vim" } },
+						workspace = {
+							checkThirdParty = false,
+							library = {
+								vim.env.VIMRUNTIME,
+							},
+						},
+					},
+				},
+			}
+
+			vim.lsp.enable("lua_ls")
 			-- lspconfig.pylsp.setup({
 			vim.lsp.config.pylsp = {
 				settings = {
@@ -280,6 +310,9 @@ return {
 			vim.lsp.config.eslint = {}
 			-- vim.lsp.start(vim.lsp.config.eslint)
 			vim.lsp.enable("eslint")
+			vim.lsp.enable("html")
+			vim.lsp.enable("emmet_language_server")
+			-- vim.lsp.inlay_hint.enable(true)
 			require("custom.lsp").setup()
 		end,
 	},
@@ -296,9 +329,11 @@ return {
 			keymap = {
 				-- set to 'none' to disable the 'default' preset
 				preset = "default",
-				["<C-space>"] = { "show", "show_documentation", "hide_documentation" },
-				["<C-e>"] = { "hide" },
-				["<CR>"] = { "select_and_accept", "fallback" },
+				-- ["<C-space>"] = { "show", "show_documentation", "hide_documentation" },
+				["<C-space>"] = { "hide", "show" },
+				["<C-e>"] = { "show", "hide_documentation", "show_documentation" },
+				-- ["<CR>"] = { "select_and_accept", "fallback" },
+				["<CR>"] = { "accept", "fallback" },
 
 				["<C-k>"] = { "select_prev", "fallback" },
 				["<C-j>"] = { "select_next", "fallback" },
@@ -319,7 +354,6 @@ return {
 				-- Adjusts spacing to ensure icons are aligned
 				nerd_font_variant = "mono",
 			},
-
 			-- (Default) Only show the documentation popup when manually triggered
 			completion = {
 				documentation = { auto_show = false },
@@ -327,7 +361,7 @@ return {
 
 			-- Default list of enabled providers defined so that you can extend it
 			sources = {
-				default = { "lsp", "path", "snippets", "buffer" },
+				default = { "snippets", "lsp", "path", "buffer" },
 			},
 
 			-- (Default) Rust fuzzy matcher for typo resistance and significantly better performance
@@ -350,44 +384,7 @@ return {
 		build = "make install_jsregexp",
 
 		config = function()
-			local ls = require("luasnip")
-			local s = ls.snippet
-			local t = ls.text_node
-			local i = ls.insert_node
-
-			ls.add_snippets("python", {
-				-- trigger is `f`
-				s("ff", {
-					-- start on a new line with `for `
-					t({ "", "print(json.dumps(" }),
-					i(0, "dev"),
-					-- line break + indentation
-					t({ ".__dict__, indent=4, default=str))" }),
-				}),
-
-				s("wj", {
-					-- start on a new line with `for `
-					t({ "", 'print(f"\\033[43m\\033[30m' }),
-					i(0, "i"),
-					-- line break + indentation
-					t({ '\\033[0m")' }),
-				}),
-				s("wk", {
-					-- start on a new line with `for `
-					t({ "", 'print(f"\\033[42m\\033[30m' }),
-					i(0, "i"),
-					-- line break + indentation
-					t({ '\\033[0m")' }),
-				}),
-				s("file", {
-					t({ "with open(" }),
-					i(1, "file"),
-					t({ ", '" }),
-					i(2, "w"),
-					t({ "') as f:" }),
-					t({ "", "\tf.write()" }),
-				}),
-			})
+			require("custom.luasnip")
 		end,
 	},
 	-- core dap plugin
@@ -436,6 +433,7 @@ return {
 	{
 		"MeanderingProgrammer/render-markdown.nvim",
 		dependencies = { "nvim-treesitter/nvim-treesitter", "nvim-tree/nvim-web-devicons" }, -- if you prefer nvim-web-devicons
+		ft = { "markdown", "codecompanion" },
 		---@module 'render-markdown'
 		---@type render.md.UserConfig
 		opts = {},
@@ -541,6 +539,44 @@ return {
 					},
 				},
 			}
+		end,
+	},
+	{
+		"olimorris/codecompanion.nvim",
+		dependencies = {
+			"nvim-lua/plenary.nvim",
+			"nvim-treesitter/nvim-treesitter",
+		},
+
+		opts = {
+			interactions = {
+				chat = {
+					adapter = "gemini",
+				},
+				inline = {
+					adapter = "gemini",
+				},
+			},
+
+			adapters = {},
+		},
+
+		config = function(_, opts)
+			opts.adapters.http.gemini = function()
+				return require("codecompanion.adapters").extend("gemini", {
+					env = {
+						api_key = "...",
+					},
+
+					schema = {
+						model = {
+							default = "gemini-3-flash-preview",
+						},
+					},
+				})
+			end
+
+			require("codecompanion").setup(opts)
 		end,
 	},
 }

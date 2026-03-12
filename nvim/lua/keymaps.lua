@@ -1,5 +1,8 @@
 local common = require("common")
 
+-- latest experimental change
+vim.keymap.set("n", "E", "diw", { desc = "Rid of word" })
+
 -- center when scroll
 vim.keymap.set("n", "<C-d>", "<C-d>zz")
 vim.keymap.set("n", "<C-u>", "<C-u>zz")
