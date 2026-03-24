@@ -461,48 +461,6 @@ return {
 	-- },
 
 	{
-		"olimorris/codecompanion.nvim",
-		dependencies = {
-			"nvim-lua/plenary.nvim",
-			"nvim-treesitter/nvim-treesitter",
-		},
-		opts = {
-			log_level = "DEBUG",
-			strategies = {
-				chat = {
-					adapter = "gemini",
-				},
-				inline = {
-					adapter = "gemini",
-				},
-			},
-			adapters = {
-				http = {},
-			},
-		},
-		config = function(_, opts)
-			local function api_key()
-				local handle = io.popen("gpg --quiet --decrypt ~/model_key.txt.gpg 2>/dev/null")
-				if handle then
-					local result = handle:read("*a")
-					handle:close()
-					-- trim whitespace/newlines
-					return result:gsub("%s+$", "")
-				end
-				return nil
-			end
-			opts.adapters.http.gemini = function()
-				return require("codecompanion.adapters").extend("gemini", {
-					env = {
-						api_key = api_key,
-					},
-				})
-			end
-
-			require("codecompanion").setup(opts)
-		end,
-	},
-	{
 		"iamcco/markdown-preview.nvim",
 		cmd = { "MarkdownPreviewToggle", "MarkdownPreview", "MarkdownPreviewStop" },
 		ft = { "markdown" },
@@ -515,9 +473,7 @@ return {
 		end,
 	},
 	{ "shortcuts/no-neck-pain.nvim" },
-	{
-		"nullchilly/fsread.nvim",
-	},
+	{ "nullchilly/fsread.nvim" },
 	{
 		"mrcjkb/rustaceanvim",
 		version = "^6", -- Recommended
@@ -551,32 +507,106 @@ return {
 		opts = {
 			interactions = {
 				chat = {
-					adapter = "gemini",
+
+					-- adapter = "gemini",
+					adapter = "openai_responses",
+					-- adapter = "openai",
+
+					-- keymaps = {
+					-- 	confirm = "<C-s>",
+					-- },
 				},
 				inline = {
-					adapter = "gemini",
+					-- 				adapter = "gemini",
+					-- adapter = "openai",
+
+					adapter = "openai_responses",
 				},
 			},
 
-			adapters = {},
+			adapters = {
+				http = {},
+			},
 		},
 
 		config = function(_, opts)
-			opts.adapters.http.gemini = function()
-				return require("codecompanion.adapters").extend("gemini", {
-					env = {
-						api_key = "...",
-					},
-
-					schema = {
-						model = {
-							default = "gemini-3-flash-preview",
-						},
-					},
-				})
-			end
-
-			require("codecompanion").setup(opts)
+			require("custom.codecompanion").setup(opts)
 		end,
+		-- ...existing code...
+		-- config = function(_, opts)
+		-- 	-- opts.adapters.http.gemini = function()
+		-- 	-- 	return require("codecompanion.adapters").extend("gemini", {
+		-- 	-- 		env = {
+		-- 	-- 			api_key = "...",
+		-- 	-- 		},
+		-- 	--
+		-- 	-- 		schema = {
+		-- 	-- 			model = {
+		-- 	-- 				default = "gemini-3-flash-preview",
+		-- 	-- 			},
+		-- 	-- 		},
+		-- 	-- 	})
+		-- 	-- end
+		-- 	opts.adapters.http.openai = function()
+		-- 		return require("codecompanion.adapters").extend("openai", {
+		-- 			env = {
+		-- 				api_key = "",
+		-- 				-- your OPENAI API key
+		-- 			},
+		--
+		-- 			schema = {
+		-- 				model = {
+		-- 					-- default = "gpt-5.4-mini", -- or gpt-4.1 / gpt-4o
+		-- 					default = "gpt-5", -- or gpt-4.1 / gpt-4o
+		-- 				},
+		-- 			},
+		-- 		})
+		-- 	end
+		--
+		-- 	require("codecompanion").setup(opts)
+		-- end,
 	},
+
+	-- {
+	-- 	"olimorris/codecompanion.nvim",
+	-- 	dependencies = {
+	-- 		"nvim-lua/plenary.nvim",
+	-- 		"nvim-treesitter/nvim-treesitter",
+	-- 	},
+	-- 	opts = {
+	-- 		log_level = "DEBUG",
+	-- 		strategies = {
+	-- 			chat = {
+	-- 				adapter = "gemini",
+	-- 			},
+	-- 			inline = {
+	-- 				adapter = "gemini",
+	-- 			},
+	-- 		},
+	-- 		adapters = {
+	-- 			http = {},
+	-- 		},
+	-- 	},
+	-- 	config = function(_, opts)
+	-- 		local function api_key()
+	-- 			local handle = io.popen("gpg --quiet --decrypt ~/model_key.txt.gpg 2>/dev/null")
+	-- 			if handle then
+	-- 				local result = handle:read("*a")
+	-- 				handle:close()
+	-- 				-- trim whitespace/newlines
+	-- 				return result:gsub("%s+$", "")
+	-- 			end
+	-- 			return nil
+	-- 		end
+	-- 		opts.adapters.http.gemini = function()
+	-- 			return require("codecompanion.adapters").extend("gemini", {
+	-- 				env = {
+	-- 					api_key = api_key,
+	-- 				},
+	-- 			})
+	-- 		end
+	--
+	-- 		require("codecompanion").setup(opts)
+	-- 	end,
+	-- },
 }

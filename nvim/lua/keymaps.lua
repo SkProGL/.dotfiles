@@ -9,7 +9,12 @@ vim.keymap.set("n", "<C-u>", "<C-u>zz")
 
 -- clear highlight on ESC
 vim.keymap.set("n", "<Esc>", "<cmd>nohlsearch<CR>")
-vim.keymap.set("n", "<Leader>t", ":echo 'Leader works!'<CR>", { desc = "Test leader key" })
+
+vim.keymap.set("n", "<leader>t", function()
+	vim.cmd("vsplit")
+	vim.cmd("terminal")
+	vim.cmd("startinsert")
+end, { noremap = true, silent = true })
 
 -- switch between buffers
 vim.keymap.set("n", "<A-l>", ":bnext<CR>", { silent = true })
@@ -53,18 +58,15 @@ vim.keymap.set("n", "<leader>rw", function()
 	local escaped = win_path:gsub('"', '\\"')
 
 	-- fully detached powershell window that does not steal focus
-	vim.fn.jobstart(
-		{
-			"powershell.exe",
-			"-WindowStyle",
-			"Hidden",
-			"-Command",
-			"Start-Process powershell.exe -ArgumentList '-NoExit','-Command','cd \""
-				.. escaped
-				.. "\"' -WindowStyle Normal",
-		},
-		{ detach = true }
-	)
+	vim.fn.jobstart({
+		"powershell.exe",
+		"-WindowStyle",
+		"Hidden",
+		"-Command",
+		"Start-Process powershell.exe -ArgumentList '-NoExit','-Command','cd \""
+			.. escaped
+			.. "\"' -WindowStyle Normal",
+	}, { detach = true })
 end, { desc = "(powershell) cwd detached" })
 
 -- open in file explorer
