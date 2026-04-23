@@ -2,6 +2,22 @@ local M = {}
 
 function M.setup(opts)
 	local key = os.getenv("GUY_API")
+
+	-- opts.adapters.http.gemini = function()
+	-- 	return require("codecompanion.adapters").extend("gemini", {
+	-- 		env = { },
+	--
+	-- 		schema = {
+	-- 			model = {
+	-- 				default = "gemini-3-flash-preview",
+	-- 				-- default = "gemma-4-26b-a4b-it",
+	-- 				-- default = "gemini-3.1-flash-lite-preview",
+	-- 			},
+	-- 		},
+	-- 	})
+	-- end
+
+	-- api key
 	opts.adapters.http.openai_responses = function()
 		-- 		return require("codecompanion.adapters").extend("openai", {
 		local c = {
@@ -10,9 +26,11 @@ function M.setup(opts)
 			},
 			schema = {
 				model = {
-					-- default = "o4-mini",
-					default = "gpt-5.4-mini",
+					default = "o4-mini",
+					-- default = "gpt-5.4-mini",
 					-- default = "gpt-5",
+					-- default = "gpt-5.4-mini", -- or gpt-4.1 / gpt-4o
+					-- default = "gpt-4o", -- or gpt-4.1 / gpt-4o
 				},
 			},
 		}
@@ -21,7 +39,6 @@ function M.setup(opts)
 	end
 
 	require("codecompanion").setup(opts)
-
 	vim.keymap.set("n", "<leader>cc", "<cmd>CodeCompanionChat Toggle<cr>", { desc = "Toggle CodeCompanion Chat" })
 	vim.keymap.set("v", "<leader>cc", "<cmd>CodeCompanionChat Add<cr>", { noremap = true, silent = true })
 	-- vim.keymap.set(

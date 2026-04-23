@@ -117,6 +117,8 @@ return {
 		-- curl https://sh.rustup.rs -sSf | sh
 		-- cargo install stylua
 
+		-- sudo apt remove fzf && git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf && ~/.fzf/install
+
 		-- sudo apt remove fzf
 		-- git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
 		-- ~/.fzf/install
@@ -132,6 +134,7 @@ return {
 					"prettier",
 					"djlint",
 					"emmet_language_server",
+					"clangd",
 				},
 				auto_update = false,
 				run_on_start = true,
@@ -243,6 +246,7 @@ return {
 					"html",
 					"lua_ls",
 					"emmet_language_server",
+					"clangd",
 					-- "rust_analyzer",
 				}, -- list of LSPs to auto-install
 				automatic_enable = false,
@@ -312,6 +316,7 @@ return {
 			vim.lsp.enable("eslint")
 			vim.lsp.enable("html")
 			vim.lsp.enable("emmet_language_server")
+			vim.lsp.enable("clangd")
 			-- vim.lsp.inlay_hint.enable(true)
 			require("custom.lsp").setup()
 		end,
@@ -499,6 +504,7 @@ return {
 	},
 	{
 		"olimorris/codecompanion.nvim",
+		version = "18.7.0",
 		dependencies = {
 			"nvim-lua/plenary.nvim",
 			"nvim-treesitter/nvim-treesitter",
@@ -517,9 +523,8 @@ return {
 					-- },
 				},
 				inline = {
-					-- 				adapter = "gemini",
+					-- adapter = "gemini",
 					-- adapter = "openai",
-
 					adapter = "openai_responses",
 				},
 			},
@@ -532,39 +537,6 @@ return {
 		config = function(_, opts)
 			require("custom.codecompanion").setup(opts)
 		end,
-		-- ...existing code...
-		-- config = function(_, opts)
-		-- 	-- opts.adapters.http.gemini = function()
-		-- 	-- 	return require("codecompanion.adapters").extend("gemini", {
-		-- 	-- 		env = {
-		-- 	-- 			api_key = "...",
-		-- 	-- 		},
-		-- 	--
-		-- 	-- 		schema = {
-		-- 	-- 			model = {
-		-- 	-- 				default = "gemini-3-flash-preview",
-		-- 	-- 			},
-		-- 	-- 		},
-		-- 	-- 	})
-		-- 	-- end
-		-- 	opts.adapters.http.openai = function()
-		-- 		return require("codecompanion.adapters").extend("openai", {
-		-- 			env = {
-		-- 				api_key = "",
-		-- 				-- your OPENAI API key
-		-- 			},
-		--
-		-- 			schema = {
-		-- 				model = {
-		-- 					-- default = "gpt-5.4-mini", -- or gpt-4.1 / gpt-4o
-		-- 					default = "gpt-5", -- or gpt-4.1 / gpt-4o
-		-- 				},
-		-- 			},
-		-- 		})
-		-- 	end
-		--
-		-- 	require("codecompanion").setup(opts)
-		-- end,
 	},
 
 	-- {
@@ -609,4 +581,28 @@ return {
 	-- 		require("codecompanion").setup(opts)
 	-- 	end,
 	-- },
+	{
+		"FluxxField/bionic-reading.nvim",
+		config = function()
+			require("bionic-reading").setup()
+		end,
+	},
+	{ "https://github.com/vague-theme/vague.nvim" },
+	{
+		"ggml-org/llama.vim",
+		init = function()
+			vim.g.llama_config = {
+				auto_fim = true,
+				-- auto_fim = false,
+				-- endpoint_fim = "http://172.29.144.1:8012/infill",
+				-- endpoint_inst = "http://172.29.144.1:8012/v1/chat/completions",
+				-- endpoint_fim = "http://172.29.153.103:8012/infill",
+				-- endpoint_inst = "http://172.29.153.103:8012/v1/chat/completions",
+				keymap_fim_trigger = "<C-F>",
+				keymap_fim_accept_full = "<Tab>",
+				keymap_fim_accept_line = "<S-Tab>",
+				keymap_fim_accept_word = "<leader>ll]",
+			}
+		end,
+	},
 }

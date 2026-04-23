@@ -3,11 +3,49 @@
 -- This is also a good place to setup other settings (vim.opt)
 vim.g.mapleader = " "
 vim.g.maplocalleader = " "
+
 require("config.lazy")
 require("options")
 require("keymaps")
+
 -- require("custom.min").setup()
 require("custom.focus").setup()
+vim.keymap.set("n", "<leader>rf", function()
+	local on = not vim.opt.spell:get()
+
+	vim.opt.spell = on
+	vim.opt.linebreak = on
+
+	if on then
+		vim.opt.fillchars = { eob = " " }
+		vim.opt.number = false
+		vim.opt.relativenumber = false
+		vim.opt.signcolumn = "no"
+		require("lualine").hide()
+		print("Writing mode ON")
+	else
+		vim.opt.fillchars = { eob = "~" }
+		vim.opt.number = true
+		vim.opt.relativenumber = true
+		vim.opt.signcolumn = "yes"
+		require("lualine").hide({ unhide = true })
+		print("Writing mode OFF")
+	end
+end, { desc = "Toggle writing mode" })
+-- vim.keymap.set("n", "<leader>rf", function()
+-- 	local new_state = not vim.opt.spell:get()
+-- 	vim.opt.spell = new_state
+-- 	vim.opt.linebreak = new_state
+-- 	vim.opt.fillchars = { eob = " " }
+-- 	vim.opt.number = false
+-- 	vim.opt.relativenumber = false
+-- 	vim.opt.signcolumn = "no"
+-- 	if new_state then
+-- 		print("Writing mode ON")
+-- 	else
+-- 		print("Writing mode OFF")
+-- 	end
+-- end, { desc = "Toggle writing mode" })
 
 vim.keymap.set("n", "<leader>kk", function() -- map <leader>kk in normal mode
 	if vim.wo.diff then -- if current window already in diff mode
@@ -19,7 +57,11 @@ vim.keymap.set("n", "<leader>kk", function() -- map <leader>kk in normal mode
 
 	vim.fn.system("git show HEAD:./" .. rel .. " > " .. tmp) -- write HEAD version of file into temp file
 
-	vim.cmd("vert diffsplit " .. tmp) -- open vertical diff split with the temp file
+	if vim.fn.winnr("l") ~= vim.fn.winnr() then
+		vim.cmd("diffsplit" .. tmp) -- open vertical diff split with the temp file
+	else
+		vim.cmd("vert diffsplit " .. tmp) -- open vertical diff split with the temp file
+	end
 	vim.cmd("file HEAD:" .. rel) -- rename the buffer
 end)
 
@@ -251,10 +293,16 @@ vim.opt.fillchars = {
 	foldclose = "",
 	foldsep = " ",
 }
+
 -- adapt colorscheme on buffer change
 vim.api.nvim_create_autocmd("BufEnter", {
 	callback = function()
 		local ft = vim.bo.filetype
+
+		local function has(t, value)
+			return t[value] == true
+		end
+
 		local material_fts = {
 			javascript = true,
 			javascriptreact = true,
@@ -266,15 +314,62 @@ vim.api.nvim_create_autocmd("BufEnter", {
 			dosbatch = true,
 		}
 
-		if material_fts[ft] then
-			vim.cmd("colo material")
+		local vague_fts = {
+			rust = true,
+			go = true,
+			cpp = true,
+			dart = true,
+		}
+
+		local melange_fts = {
+			markdown = true,
+			text = true,
+			help = true,
+		}
+
+		if has(material_fts, ft) then
+			vim.cmd("colorscheme material")
 			vim.api.nvim_exec_autocmds("ColorScheme", { pattern = "material" })
+		elseif has(vague_fts, ft) then
+			vim.cmd("colorscheme vague")
+			vim.api.nvim_exec_autocmds("ColorScheme", { pattern = "vague" })
+		elseif has(melange_fts, ft) then
+			vim.cmd("colorscheme melange")
+			vim.api.nvim_exec_autocmds("ColorScheme", { pattern = "melange" })
 		else
-			vim.cmd("colo melange")
+			vim.cmd("colorscheme melange")
 			vim.api.nvim_exec_autocmds("ColorScheme", { pattern = "melange" })
 		end
 	end,
 })
+-- adapt colorscheme on buffer change
+-- vim.api.nvim_create_autocmd("BufEnter", {
+-- 	callback = function()
+-- 		local ft = vim.bo.filetype
+-- 		local material_fts = {
+-- 			javascript = true,
+-- 			javascriptreact = true,
+-- 			typescript = true,
+-- 			typescriptreact = true,
+-- 			html = true,
+-- 			css = true,
+-- 			lua = true,
+-- 			dosbatch = true,
+-- 		}
+--
+-- 		if material_fts[ft] then
+-- 			vim.cmd("colo material")
+-- 			vim.api.nvim_exec_autocmds("ColorScheme", { pattern = "material" })
+-- 		else
+-- 			-- vim.cmd("colo melange")
+-- 			-- vim.api.nvim_exec_autocmds("ColorScheme", { pattern = "melange" })
+-- 			vim.cmd("colo vague")
+-- 			vim.api.nvim_exec_autocmds("ColorScheme", { pattern = "vague" })
+-- 			-- vim.o.background = "light"
+-- 			-- vim.cmd.colorscheme("default")
+-- 		end
+-- 	end,
+-- })
 
 -- -- toggle between None / True / False in python
 -- local function toggle_python_literal()
@@ -385,3 +480,5 @@ vim.keymap.set("n", "<leader>O", function()
 	end
 	print("No uv_venv window to close")
 end, { desc = "Close venv terminal window if open" })
+
+vim.keymap.set("n", "<leader>j", "1z=", { desc = "Fix spelling (auto)" })

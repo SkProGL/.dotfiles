@@ -2,7 +2,7 @@
 # example script with proper background processes setup
 # allows to do fg with vim
 dir="/mnt/c/Users/_/Desktop/"
-session="project_1"
+session="T"
 
 tmux new-session -d -s "$session" -c "$dir"
 sleep 0.2

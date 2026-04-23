@@ -1,3 +1,7 @@
+# make nvim default editor for terminal
+export EDITOR=nvim
+export VISUAL=nvim
+
 # enable vi mode
 set -o vi
 
