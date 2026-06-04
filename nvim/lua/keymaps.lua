@@ -1,5 +1,7 @@
 local common = require("common")
 
+-- save file in insert mode
+vim.keymap.set("i", "<C-s>", "<Esc>:w<CR>a")
 -- latest experimental change
 vim.keymap.set("n", "E", "diw", { desc = "Rid of word" })
 

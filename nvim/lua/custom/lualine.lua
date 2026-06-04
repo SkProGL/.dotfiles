@@ -167,6 +167,16 @@ vim.keymap.set("n", "<A-0>", function()
 	end
 	vim.cmd("redrawstatus")
 end, { silent = true, desc = "Close buffer" })
+
+vim.keymap.set("n", "<A-=>", function()
+	local current = vim.api.nvim_get_current_buf()
+
+	for _, buf in ipairs(vim.api.nvim_list_bufs()) do
+		if buf ~= current and vim.bo[buf].buflisted then
+			vim.cmd("bdelete " .. buf)
+		end
+	end
+end, { desc = "Close all buffers except current" })
 -- vim.keymap.set("n", "<A-0>", ":bd<CR>", { silent = true, desc = "Close buffer" })
 
 -- alt + - switch to previous buffer
