@@ -6,7 +6,10 @@ export VISUAL=nvim
 set -o vi
 
 alias l='ls -lah'
+alias o='opencode'
+alias c='clear'
 alias v="nvim"
+alias li='cd && sudo umount /mnt/c && sudo mount -t drvfs C: /mnt/c && echo "WSL re-mounted"'
 
 # (vim-like) use up and down arrow
 bind '"\C-j": history-search-forward'
