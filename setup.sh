@@ -34,13 +34,13 @@ nvim_install_with_purge(){
 }
 
 nvim_update_config(){
-	echo "Setup neovim configuration and remove old files (if exist). Install ripgrep, fzf, nodejs and xclip"
+	echo "Setup neovim configuration and remove old files (if exist). Install ripgrep, fzf, nodejs, unzip and xclip"
 	local folder="${1:-nvim}" 
 	echo "[nvim] removing current configuration"
 	rm -rf "$HOME/.config/nvim"
 	echo "[nvim] updating config using $folder as source"
 	cp -r ${folder} "$HOME/.config/nvim"
-	sudo apt install fzf ripgrep nodejs xclip -y
+	sudo apt install fzf ripgrep nodejs xclip unzip -y
 	sudo apt remove fzf
 	git clone --depth 1 https://github.com/junegunn/fzf.git "$HOME/.fzf"
 	"$HOME/.fzf/install"
@@ -80,6 +80,8 @@ bashrc(){
     grep -q 'alias c="clear"' "$bashrc" 2>/dev/null || echo 'alias c="clear"' >> "$bashrc"
     grep -q 'alias t="tmux"' "$bashrc" 2>/dev/null || echo 'alias t="tmux"' >> "$bashrc"
     grep -q 'alias lg="lazygit"' "$bashrc" 2>/dev/null || echo 'alias lg="lazygit"' >> "$bashrc"
+    # alias li='cd && sudo umount /mnt/c && sudo mount -t drvfs C: /mnt/c && echo "WSL re-mounted"'
+
 
     # shellcheck disable=SC1090
     . "$bashrc" 2>/dev/null || true
